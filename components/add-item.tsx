@@ -3,6 +3,9 @@ import React, { useState } from "react";
 
 const AddItem = () => {
   const [showModal, setShowModal] = useState(false);
+  const changeAssignee = (e: any) => {
+    let value = e.target.value;
+  };
   return (
     <>
       <button
@@ -11,7 +14,7 @@ const AddItem = () => {
         onClick={() => setShowModal(true)}
         type="button"
       >
-        + Add Item
+        + Add Task
       </button>
       {showModal ? (
         <>
@@ -39,7 +42,7 @@ const AddItem = () => {
                 </button>
                 <div className="px-6 py-6 lg:px-8">
                   <h3 className="mb-4 text-xl font-medium text-gray-900 dark:text-white">
-                    Add To-do item
+                    Add To-do Task
                   </h3>
                   <form className="space-y-6" action="#">
                     <div>
@@ -81,14 +84,22 @@ const AddItem = () => {
                       >
                         Assignee
                       </label>
-                      <input
-                        type="text"
-                        name="assignee"
-                        id="assignee"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                        placeholder="assignee"
-                        required={true}
-                      />
+                      <label
+                        htmlFor="countries"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        Select an option
+                      </label>
+                      <select
+                        id="countries"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      >
+                        <option onChange={changeAssignee}>Assignee</option>
+                        <option value="US">United States</option>
+                        <option value="CA">Canada</option>
+                        <option value="FR">France</option>
+                        <option value="DE">Germany</option>
+                      </select>
                     </div>
                     <div>
                       <label

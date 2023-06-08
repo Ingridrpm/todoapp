@@ -51,9 +51,8 @@ export const authOptions: NextAuthOptions = {
         return {
           id: user.id + '',
           email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          randomKey: 'asaf'
+          name: user.firstName,
+          randomKey: ''
         }
       }
     })
