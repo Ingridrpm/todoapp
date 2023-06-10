@@ -1,17 +1,70 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Datetime from "react-datetime";
+import "react-datetime/css/react-datetime.css";
+//import "react-datetime-picker/dist/DateTimePicker.css";
+//import "react-calendar/dist/Calendar.css";
+//import "react-clock/dist/Clock.css";
+//import DateTimePicker from "react-datetime-picker";
 
-const AddItem = () => {
+export interface Assignee {
+  id: number;
+  name: string;
+}
+
+interface AddItemProps {
+  userName: string;
+}
+
+const AddItem = ({ userName }: AddItemProps) => {
   const [showModal, setShowModal] = useState(false);
+  const [assignees, setAssignees] = useState([]);
+  const [dueDate, setDueDate] = useState("");
+
+  const getAssignees = async () => {
+    try {
+      const response = await fetch("/api/assignees/read", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const assignee = await response.json();
+        setAssignees(assignee);
+      } else {
+        console.error("Failed to read assignees");
+        return [];
+      }
+    } catch (error) {
+      console.error("Error reading assignees:", error);
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    getAssignees();
+  }, []);
+
+  const dateChange = (momentObj) => {
+    setDueDate(momentObj.format("YYYY-MM-DD HH:mm:ss"));
+  };
+
   const changeAssignee = (e: any) => {
     let value = e.target.value;
+  };
+
+  const refreshShowModal = () => {
+    getAssignees();
+    setShowModal(true);
   };
   return (
     <>
       <button
         style={{ float: "right" }}
         className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
-        onClick={() => setShowModal(true)}
+        onClick={refreshShowModal}
         type="button"
       >
         + Add Task
@@ -84,21 +137,19 @@ const AddItem = () => {
                       >
                         Assignee
                       </label>
-                      <label
-                        htmlFor="countries"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >
-                        Select an option
-                      </label>
                       <select
-                        id="countries"
+                        id="assignee"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        onChange={changeAssignee}
                       >
-                        <option onChange={changeAssignee}>Assignee</option>
-                        <option value="US">United States</option>
-                        <option value="CA">Canada</option>
-                        <option value="FR">France</option>
-                        <option value="DE">Germany</option>
+                        <option value={0} key={0}>
+                          {userName}
+                        </option>
+                        {assignees.map((assignee: Assignee) => (
+                          <option value={assignee.id} key={assignee.id}>
+                            {assignee.name}
+                          </option>
+                        ))}
                       </select>
                     </div>
                     <div>
@@ -108,14 +159,17 @@ const AddItem = () => {
                       >
                         Due date
                       </label>
-                      <input
-                        type="text"
-                        name="dueDateTime"
-                        id="dueDateTime"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                        placeholder="dueDateTime"
-                        required={true}
-                      />
+                      <div>
+                        <Datetime
+                          onChange={dateChange}
+                          inputProps={{
+                            className:
+                              "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500",
+                            placeholder: "Select due date and time",
+                          }}
+                        />
+                        <p>Selected Date: {dueDate}</p>
+                      </div>
                     </div>
                   </form>
                 </div>
@@ -133,7 +187,7 @@ const AddItem = () => {
                     onClick={() => setShowModal(false)}
                   >
                     <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
-                      Add Item
+                      Save
                     </span>
                   </button>
                 </div>

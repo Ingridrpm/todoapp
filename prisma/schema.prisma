@@ -20,20 +20,28 @@ model User {
 }
 
 model List {
-  id     Int    @id @default(autoincrement())
-  title  String
-  items  Item[]
-  userId Int
-  user   User   @relation(fields: [userId], references: [id])
+  id       Int        @id @default(autoincrement())
+  title    String
+  items    Item[]
+  userId   Int
+  user     User       @relation(fields: [userId], references: [id])
+  Assignee Assignee[]
 }
 
 model Item {
   id          Int      @id @default(autoincrement())
   title       String
   description String?
-  assignee    String
+  assignee    Int
   dueDateTime DateTime
   status      Int
   listId      Int
   list        List     @relation(fields: [listId], references: [id])
+}
+
+model Assignee {
+  id     Int    @id @default(autoincrement())
+  name   String
+  listId Int
+  list   List   @relation(fields: [listId], references: [id])
 }

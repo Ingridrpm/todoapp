@@ -3,6 +3,10 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "@/components/mode-toggle";
+import { authOptions } from "./api/auth/[...nextauth]/route";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import UserOption from "@/components/user-options";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,7 +18,9 @@ interface RootLayoutProps {
   children: React.ReactNode;
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default async function RootLayout({ children }: RootLayoutProps) {
+  const session = await getServerSession(authOptions);
+
   return (
     <html lang="en">
       <body
@@ -33,6 +39,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 </a>
                 <ModeToggle />
               </div>
+              {session ? <UserOption /> : <></>}
             </header>
             <main>{children}</main>
           </div>

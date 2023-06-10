@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { DragDropContext } from "react-beautiful-dnd";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import Column from "./column";
 
 export interface Task {
@@ -13,49 +13,31 @@ export interface Task {
 }
 
 interface ToDoPanelProps {
-  items: Task[]; // Define the tasks prop of type Task[]
+  items: Task[];
 }
 
 const ToDoPanel: React.FC<ToDoPanelProps> = ({ items }) => {
   console.log(items);
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: "task1",
-      title: "Task 1",
-      description: "Description for Task 1",
-      assignee: "John Doe",
-      dueDateTime: "2023-06-30T12:00:00",
-      column: "todo",
-    },
-    {
-      id: "task2",
-      title: "Task 2",
-      description: "Description for Task 2",
-      assignee: "Jane Smith",
-      dueDateTime: "2023-06-30T14:00:00",
-      column: "todo",
-    },
-    // Add more tasks here...
-  ]);
+  const [tasks, setTasks] = useState<Task[]>(items);
 
-  const dragEnd = (result: any) => {
-    //point
-    const { source, destination } = result;
+  const onDragEnd = async (result: DropResult) => {
+    const { draggableId, source, destination } = result;
 
     if (!destination) {
       return;
     }
 
     const updatedTasks = [...tasks];
-    const movedTask = updatedTasks.splice(source.index, 1)[0];
-    movedTask.column = destination.droppableId; // Update the column attribute
-    updatedTasks.splice(destination.index, 0, movedTask);
+    const movedTask = updatedTasks.find((task) => task.id === draggableId);
 
-    setTasks(updatedTasks);
+    if (movedTask) {
+      movedTask.column = destination.droppableId;
+      setTasks(updatedTasks);
+    }
   };
 
   return (
-    <DragDropContext onDragEnd={dragEnd}>
+    <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex justify-center py-8 bg-gray-100 dark:bg-gray-900">
         <div className="grid grid-cols-3 gap-8">
           <Column
