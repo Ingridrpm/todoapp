@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
+import { useTheme } from "next-themes";
+//import darkModeStyles from "datetime-dark-mode.css";
 //import "react-datetime-picker/dist/DateTimePicker.css";
 //import "react-calendar/dist/Calendar.css";
 //import "react-clock/dist/Clock.css";
@@ -20,6 +22,12 @@ const AddItem = ({ userName }: AddItemProps) => {
   const [showModal, setShowModal] = useState(false);
   const [assignees, setAssignees] = useState([]);
   const [dueDate, setDueDate] = useState("");
+  const { setTheme, theme } = useTheme();
+
+  const isDarkTheme = () => {
+    const { setTheme, theme } = useTheme();
+    return theme === "dark";
+  };
 
   const getAssignees = async () => {
     try {
@@ -59,6 +67,7 @@ const AddItem = ({ userName }: AddItemProps) => {
     getAssignees();
     setShowModal(true);
   };
+
   return (
     <>
       <button
@@ -160,6 +169,29 @@ const AddItem = ({ userName }: AddItemProps) => {
                         Due date
                       </label>
                       <div>
+                        {isDarkTheme() && (
+                          <style>{`
+                              .rdtPicker {
+                                background: #333333;
+                                color: #ffffff;
+                              }
+
+                              .rdtPicker td {
+                                color: #ffffff;
+                              }
+
+                              .rdtPicker td.rdtToday:before {
+                                border-bottom-color: #ffffff;
+                              }
+
+                              .rdtPicker td.rdtActive,
+                              .rdtPicker td.rdtActive:hover {
+                                background-color: #428bca;
+                                color: #ffffff;
+                                text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+                              }
+                            `}</style>
+                        )}
                         <Datetime
                           onChange={dateChange}
                           inputProps={{
@@ -168,7 +200,6 @@ const AddItem = ({ userName }: AddItemProps) => {
                             placeholder: "Select due date and time",
                           }}
                         />
-                        <p>Selected Date: {dueDate}</p>
                       </div>
                     </div>
                   </form>
