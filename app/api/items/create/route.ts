@@ -9,32 +9,32 @@ export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
     const userId = parseInt((session?.user as { id: string }).id);
     const user = await prisma.user.findUnique({
-        where: { id: userId },
-        include: { lists: true  },
-      });
-    const listId = user?.lists[0]?.id!
-    const { title, description, assignee, dueDateTime } = await req.json()
-
+      where: { id: userId },
+      include: { lists: true },
+    });
+    const listId = user?.lists[0]?.id!;
+    const { title, description, selectedAssignee, dueDate } = await req.json();
     const item = await prisma.item.create({
-        data: {
-          title,
-          description,
-          assignee,
-          listId,
-          dueDateTime,
-          status:0
-        },
-      });
-    return NextResponse.json(item)
+      data: {
+        title: title,
+        description: description,
+        assignee: parseInt(selectedAssignee), 
+        list: { connect: { id: listId } }, 
+        dueDateTime: new Date(dueDate),
+        status: 1,
+      },
+    });
+
+    return NextResponse.json(item);
   } catch (err: any) {
-    console.log("ERROR create item: ",err)
+    console.log("ERROR create item: ", err);
     return new NextResponse(
       JSON.stringify({
-        error: err.message
+        error: err.message,
       }),
       {
-        status: 500
+        status: 500,
       }
-    )
+    );
   }
 }

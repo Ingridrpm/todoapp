@@ -22,7 +22,9 @@ const AddItem = ({ userName }: AddItemProps) => {
   const [showModal, setShowModal] = useState(false);
   const [assignees, setAssignees] = useState([]);
   const [dueDate, setDueDate] = useState("");
-  const { setTheme, theme } = useTheme();
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [selectedAssignee, setSelectedAssignee] = useState("");
 
   const isDarkTheme = () => {
     const { setTheme, theme } = useTheme();
@@ -55,17 +57,59 @@ const AddItem = ({ userName }: AddItemProps) => {
     getAssignees();
   }, []);
 
-  const dateChange = (momentObj) => {
+  const dateChange = (momentObj: any) => {
     setDueDate(momentObj.format("YYYY-MM-DD HH:mm:ss"));
   };
 
-  const changeAssignee = (e: any) => {
-    let value = e.target.value;
+  const changeAssignee = async (e: any) => {
+    setSelectedAssignee(e.target.value);
+    console.log("--------------------------");
+    console.log(e.target.value);
+    console.log("--------------------------");
   };
 
   const refreshShowModal = () => {
     getAssignees();
     setShowModal(true);
+  };
+
+  const saveItem = async () => {
+    if (title.trim() !== "") {
+      try {
+        const response = await fetch("/api/items/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title,
+            description,
+            selectedAssignee,
+            dueDate,
+          }),
+        });
+
+        if (response.ok) {
+          const item = await response.json();
+          console.log("item created:", item);
+        } else {
+          console.error("Failed to create item");
+        }
+      } catch (error) {
+        console.error("Error creating item:", error);
+      }
+    } else {
+      console.log("ERROR, no title");
+    }
+  };
+
+  const save = () => {
+    saveItem();
+    setTitle("");
+    setDescription("");
+    setDueDate("");
+    setSelectedAssignee("");
+    setShowModal(false);
   };
 
   return (
@@ -78,7 +122,7 @@ const AddItem = ({ userName }: AddItemProps) => {
       >
         + Add Task
       </button>
-      {showModal ? (
+      {showModal && (
         <>
           <div className="flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none ">
             <div className="relative w-full max-w-md max-h-full">
@@ -121,6 +165,8 @@ const AddItem = ({ userName }: AddItemProps) => {
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                         placeholder="Title"
                         required={true}
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
                       />
                     </div>
                     <div>
@@ -137,6 +183,8 @@ const AddItem = ({ userName }: AddItemProps) => {
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                         placeholder="Description"
                         required={false}
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
                       />
                     </div>
                     <div>
@@ -160,6 +208,7 @@ const AddItem = ({ userName }: AddItemProps) => {
                           </option>
                         ))}
                       </select>
+                      <h1>SELEECTED: {selectedAssignee}</h1>
                     </div>
                     <div>
                       <label
@@ -200,6 +249,7 @@ const AddItem = ({ userName }: AddItemProps) => {
                             placeholder: "Select due date and time",
                           }}
                         />
+                        <h1>{dueDate}</h1>
                       </div>
                     </div>
                   </form>
@@ -215,7 +265,7 @@ const AddItem = ({ userName }: AddItemProps) => {
                   <button
                     className="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800"
                     type="button"
-                    onClick={() => setShowModal(false)}
+                    onClick={save}
                   >
                     <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
                       Save
@@ -226,7 +276,7 @@ const AddItem = ({ userName }: AddItemProps) => {
             </div>
           </div>
         </>
-      ) : null}
+      )}
     </>
   );
 };
