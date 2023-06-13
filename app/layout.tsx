@@ -38,8 +38,13 @@ export default async function RootLayout({ children }: RootLayoutProps) {
                   To-Do App
                 </a>
                 <ModeToggle />
+                {session && (
+                  <UserOption
+                    name={session?.user?.name || ""}
+                    email={session?.user?.email || ""}
+                  />
+                )}
               </div>
-              {session ? <UserOption /> : <></>}
             </header>
             <main>{children}</main>
           </div>

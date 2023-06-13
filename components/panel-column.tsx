@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { useDrop } from "react-dnd";
 import { PropsWithChildren } from "react";
 import PanelItemCard from "./panel-item-card";
-import { State, Ticket } from "./todo-pane";
+import { State, Ticket } from "./tabs-elemet";
 
 const updateItemState = async (itemId: string, newStatus: string) => {
   try {
@@ -47,7 +47,6 @@ const PanelColumn = ({
   >(() => ({
     accept: "ticket",
     drop: (ticket) => {
-      //moveTicket(ticket, columnState);
       ticket.state = columnState;
       updateItemState(ticket.id, columnState);
     },
@@ -60,14 +59,14 @@ const PanelColumn = ({
     <div
       ref={drop}
       className={clsx(
-        "h-full flex basis-full bg-slate-200 rounded-xl flex-col text-black overflow-hidden",
+        "h-full flex basis-full bg-slate-200 dark:bg-slate-700 rounded-xl flex-col text-black overflow-hidden",
         {
           "bg-slate-300": isOver,
           "ring ring-blue-200": canDrop,
         }
       )}
     >
-      <p className="h-10 flex items-center justify-center text-xl bg-slate-100 font-medium">
+      <p className="h-10 flex items-center justify-center text-xl bg-slate-100 dark:bg-slate-600 font-medium">
         {columnState}
       </p>
       <div className={clsx("rounded-xl flex flex-col gap-2 p-2")}>

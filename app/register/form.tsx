@@ -1,6 +1,6 @@
 "use client";
-import { signIn } from "next-auth/react";
 import React, { useState } from "react";
+import { signIn, signOut } from "next-auth/react";
 
 const RegisterForm = () => {
   const [firstName, setFirstName] = useState("");
@@ -178,6 +178,7 @@ const RegisterForm = () => {
                 <a
                   href="#"
                   className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                  onClick={() => signIn()}
                 >
                   Login here
                 </a>

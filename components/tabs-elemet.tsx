@@ -1,7 +1,19 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ToDoPanel from "./todo-pane";
 import ItemTable from "./item-table";
+import { List } from "@prisma/client";
+
+export type State = "Todo" | "In Progress" | "Done";
+
+export type Ticket = {
+  title: string;
+  state: State;
+  id: string;
+  description?: string | null;
+  assignee: string;
+  dueDateTime: Date;
+};
 
 function TabsElement() {
   const [selectedTab, setSelectedTab] = useState("board");
@@ -9,6 +21,55 @@ function TabsElement() {
   const tabChange = (tab: any) => {
     setSelectedTab(tab);
   };
+
+  const tks: Ticket[] = [];
+  const [items, setItems] = useState([]);
+  const [tickets, setTickets] = useState(tks);
+
+  interface Item {
+    id: number;
+    title: string;
+    description?: string | null;
+    assignee: string;
+    dueDateTime: Date;
+    status: number;
+    listId: number;
+    list: List;
+  }
+
+  useEffect(() => {
+    const getItems = async () => {
+      try {
+        const response = await fetch("/api/items/read");
+        if (response.ok) {
+          const items = await response.json();
+          const tickets = items.map((item: Item) => ({
+            id: item.id.toString(),
+            title: item.title,
+            description: item.description || "",
+            assignee: item.assignee.toString(),
+            dueDateTime: item.dueDateTime,
+            state:
+              item.status === 1
+                ? "Todo"
+                : item.status === 2
+                ? "In Progress"
+                : "Done",
+          }));
+          setItems(items);
+          setTickets(tickets);
+        } else {
+          console.error("Failed to read items");
+        }
+      } catch (error) {
+        console.error("Error reading items:", error);
+      }
+    };
+
+    getItems();
+  }, []);
+
+  //const { state, moveTicket } = useTicketManager(tickets);
 
   return (
     <>
@@ -75,11 +136,11 @@ function TabsElement() {
         <br />
         {selectedTab === "board" ? (
           <>
-            <ToDoPanel />
+            <ToDoPanel tickets={tickets} />
           </>
         ) : (
           <>
-            <ItemTable />
+            <ItemTable tickets={tickets} />
           </>
         )}
       </div>

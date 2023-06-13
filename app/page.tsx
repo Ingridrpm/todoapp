@@ -1,14 +1,8 @@
-import ItemTable from "@/components/item-table";
 import { LoginButton, LogoutButton } from "./auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import AddItem from "@/components/add-item";
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import Column from "@/components/column";
-import ToDoPanel from "@/components/todo-pane";
-import prisma from "@/lib/prisma";
-import { List } from "@prisma/client";
 import AddAssignee from "@/components/add-assignee";
 import TabsElement from "@/components/tabs-elemet";
 
@@ -24,10 +18,6 @@ export default async function Home() {
       <AddAssignee />
       {"   "}
       <AddItem userName={session.user?.name || ""} />
-      <LoginButton />
-      <LogoutButton />
-      <h2>Server Session</h2>
-      <pre>{JSON.stringify(session)}</pre>
       <TabsElement />
     </div>
   );
