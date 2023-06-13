@@ -48,9 +48,7 @@ const PanelColumn = ({
     accept: "ticket",
     drop: (ticket) => {
       //moveTicket(ticket, columnState);
-      tickets.map((t, index) => {
-        if (t.id === ticket.id) tickets.slice(index);
-      });
+      ticket.state = columnState;
       updateItemState(ticket.id, columnState);
     },
     collect: (monitor) => ({

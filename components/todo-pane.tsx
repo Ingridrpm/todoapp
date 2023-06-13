@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import Column from "./column";
 
@@ -35,53 +35,44 @@ const ToDoPanel = () => {
     list: List;
   }
 
-  const getItems = async () => {
-    try {
-      const response = await fetch("/api/items/read", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        const items = await response.json();
-        const tickets: Ticket[] = items.map((item: Item) => ({
-          id: item.id + "",
-          title: item.title,
-          description: item.description ?? "",
-          assignee: item.assignee + "",
-          dueDateTime: item.dueDateTime,
-          state:
-            item.status === 1
-              ? "Todo"
-              : item.status === 2
-              ? "In Progress"
-              : "Done",
-        }));
-        setItems(items);
-        setTickets(tickets);
-      } else {
-        console.error("Failed to read items");
-        return [];
+  useEffect(() => {
+    const getItems = async () => {
+      try {
+        const response = await fetch("/api/items/read");
+        if (response.ok) {
+          const items = await response.json();
+          const tickets = items.map((item: Item) => ({
+            id: item.id.toString(),
+            title: item.title,
+            description: item.description || "",
+            assignee: item.assignee.toString(),
+            dueDateTime: item.dueDateTime,
+            state:
+              item.status === 1
+                ? "Todo"
+                : item.status === 2
+                ? "In Progress"
+                : "Done",
+          }));
+          setItems(items);
+          setTickets(tickets);
+        } else {
+          console.error("Failed to read items");
+        }
+      } catch (error) {
+        console.error("Error reading items:", error);
       }
-    } catch (error) {
-      console.error("Error reading items:", error);
-      return [];
-    }
-  };
+    };
 
-  getItems();
+    getItems();
+  }, []);
 
   //const { state, moveTicket } = useTicketManager(tickets);
 
   const columns = ["Todo", "In Progress", "Done"];
   return (
     <DndProvider backend={HTML5Backend}>
-      <main className={`p-2 flex min-h-screen bg-white gap-2`}>
-        <button className="absolute bottom-4 left-4 rounded-lg bg-slate-950 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 px-4 py-2">
-          Reset
-        </button>
+      <main className={`p-2 flex min-h-screen bg-white dark:bg-black gap-2`}>
         <div className="flex w-full gap-4">
           {columns.map((columnState) => (
             <PanelColumn

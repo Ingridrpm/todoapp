@@ -19,6 +19,18 @@ const PanelItemCard = ({ ticket }: { ticket: Ticket }) => {
       didDrop: monitor.didDrop(),
     }),
   }));
+  const dueDate = new Date(ticket.dueDateTime);
+  const options: Intl.DateTimeFormatOptions = {
+    month: "long",
+    day: "numeric",
+    year: "numeric" as const,
+  };
+  const date = dueDate.toLocaleString("en-US", options);
+  const time = dueDate.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+  });
+
   return (
     <div
       ref={drag}
@@ -33,6 +45,8 @@ const PanelItemCard = ({ ticket }: { ticket: Ticket }) => {
       <span className="bg-slate-700 rounded-full  text-white flex items-center justify-center">
         {ticket.state}
       </span>
+      <span>{date}</span>
+      <span>{time}</span>
     </div>
   );
 };

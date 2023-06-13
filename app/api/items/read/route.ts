@@ -10,7 +10,13 @@ export async function GET(req: Request) {
     const userId = parseInt((session?.user as { id: string }).id);
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      include: { lists: { include: { items: true } } },
+      include: {
+        lists: {
+          include: {
+            items: { orderBy: { dueDateTime: "asc" } },
+          },
+        },
+      },
     });
 
     const items = user?.lists[0]?.items || [];

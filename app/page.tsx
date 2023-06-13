@@ -10,6 +10,7 @@ import ToDoPanel from "@/components/todo-pane";
 import prisma from "@/lib/prisma";
 import { List } from "@prisma/client";
 import AddAssignee from "@/components/add-assignee";
+import TabsElement from "@/components/tabs-elemet";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
@@ -27,8 +28,7 @@ export default async function Home() {
       <LogoutButton />
       <h2>Server Session</h2>
       <pre>{JSON.stringify(session)}</pre>
-      <ItemTable />
-      <ToDoPanel />
+      <TabsElement />
     </div>
   );
 }
