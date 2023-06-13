@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import AddItem from "@/components/add-item";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import Column from "@/components/column";
-import ToDoPanel, { Task } from "@/components/todo-pane";
+import ToDoPanel from "@/components/todo-pane";
 import prisma from "@/lib/prisma";
 import { List } from "@prisma/client";
 import AddAssignee from "@/components/add-assignee";
@@ -18,37 +18,6 @@ export default async function Home() {
     redirect("/api/auth/signin");
   }
 
-  const userId = parseInt((session.user as { id: string }).id);
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    include: { lists: { include: { items: true } } },
-  });
-
-  const items = user?.lists[0]?.items || [];
-  interface Item {
-    id: number;
-    title: string;
-    description?: string | null;
-    assignee: string;
-    dueDateTime: Date;
-    status: number;
-    listId: number;
-    list: List;
-  }
-
-  const tasks: Task[] = [];
-  items.map((item) => {
-    tasks.push({
-      id: item.id + "",
-      title: item.title,
-      description: item.description ?? "",
-      assignee: item.assignee + "",
-      dueDateTime: item.dueDateTime + "",
-      column:
-        item.status == 1 ? "todo" : item.status == 2 ? "inProcess" : "done",
-    });
-  });
-
   return (
     <div className="max-w-4xl mx-auto py-10 px-4">
       <AddAssignee />
@@ -59,7 +28,7 @@ export default async function Home() {
       <h2>Server Session</h2>
       <pre>{JSON.stringify(session)}</pre>
       <ItemTable />
-      <ToDoPanel items={tasks} />
+      <ToDoPanel />
     </div>
   );
 }
