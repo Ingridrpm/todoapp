@@ -9,10 +9,12 @@ const PanelItemCard = ({
   ticket,
   reload,
   userName,
+  assignees,
 }: {
   ticket: Ticket;
   reload: () => void;
   userName: string;
+  assignees: { id: string; name: string; listId: string }[];
 }) => {
   const [{ isDragging }, drag, dragPreview] = useDrag<
     Ticket,
@@ -55,6 +57,13 @@ const PanelItemCard = ({
       return "text-green-600";
     }
   };
+
+  const foundAssignee = assignees.find(
+    (assignee) => assignee.id + "" === ticket.assignee
+  );
+  const [assigneeName, setAssigneeName] = useState(
+    foundAssignee ? foundAssignee.name : null
+  );
 
   const [showModal, setShowModal] = useState(false);
 
@@ -122,7 +131,7 @@ const PanelItemCard = ({
             </svg>
           </span>
           <p className="text-xs text-gray-900 dark:text-white">
-            {ticket.assignee}
+            {assigneeName}
           </p>
         </span>
         <span

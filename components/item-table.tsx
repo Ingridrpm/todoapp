@@ -7,9 +7,15 @@ interface ItemTableProps {
   tickets: Ticket[];
   reload: () => void;
   userName: string;
+  assignees: { id: string; name: string; listId: string }[];
 }
 
-const ItemTable = ({ tickets, reload, userName }: ItemTableProps) => {
+const ItemTable = ({
+  tickets,
+  reload,
+  userName,
+  assignees,
+}: ItemTableProps) => {
   const t: Ticket = {
     title: "",
     state: "Todo",
@@ -58,6 +64,12 @@ const ItemTable = ({ tickets, reload, userName }: ItemTableProps) => {
     } else {
       return "text-green-600";
     }
+  };
+
+  const getAssigneeNameById = (id: string) => {
+    if (id === "0") return userName;
+    const foundAssignee = assignees.find((assignee) => assignee.id + "" === id);
+    return foundAssignee ? foundAssignee.name : null;
   };
 
   return (
@@ -114,7 +126,9 @@ const ItemTable = ({ tickets, reload, userName }: ItemTableProps) => {
                       </span>
                     )}
                   </td>
-                  <td className="px-6 py-4">{ticket.assignee}</td>
+                  <td className="px-6 py-4">
+                    {getAssigneeNameById(ticket.assignee)}
+                  </td>
                   <td className="px-6 py-4">
                     <span
                       className={`${getColorClass(

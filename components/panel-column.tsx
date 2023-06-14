@@ -34,11 +34,13 @@ const PanelColumn = ({
   allTickets,
   reload,
   userName,
+  assignees,
 }: PropsWithChildren<{
   columnState: State;
   allTickets: Ticket[];
   userName: string;
   reload: () => void;
+  assignees: { id: string; name: string; listId: string }[];
 }>) => {
   const tickets: Ticket[] = [];
   allTickets.map((ticket) => {
@@ -81,6 +83,7 @@ const PanelColumn = ({
             ticket={ticket}
             reload={reload}
             userName={userName}
+            assignees={assignees}
           />
         ))}
       </div>

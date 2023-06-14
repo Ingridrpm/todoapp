@@ -7,10 +7,15 @@ interface ToDoPanelProps {
   tickets: Ticket[];
   reload: () => void;
   userName: string;
-  assignees: {};
+  assignees: { id: string; name: string; listId: string }[];
 }
 
-const ToDoPanel = ({ tickets, reload, userName }: ToDoPanelProps) => {
+const ToDoPanel = ({
+  tickets,
+  reload,
+  userName,
+  assignees,
+}: ToDoPanelProps) => {
   const columns = ["Todo", "In Progress", "Done"];
   return (
     <DndProvider backend={HTML5Backend}>
@@ -25,6 +30,7 @@ const ToDoPanel = ({ tickets, reload, userName }: ToDoPanelProps) => {
               columnState={columnState as State}
               reload={reload}
               userName={userName}
+              assignees={assignees}
             />
           ))}
         </div>
