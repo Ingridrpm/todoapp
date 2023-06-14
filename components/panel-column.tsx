@@ -32,9 +32,13 @@ const updateItemState = async (itemId: string, newStatus: string) => {
 const PanelColumn = ({
   columnState,
   allTickets,
+  reload,
+  userName,
 }: PropsWithChildren<{
   columnState: State;
   allTickets: Ticket[];
+  userName: string;
+  reload: () => void;
 }>) => {
   const tickets: Ticket[] = [];
   allTickets.map((ticket) => {
@@ -55,6 +59,7 @@ const PanelColumn = ({
       canDrop: monitor.canDrop(),
     }),
   }));
+
   return (
     <div
       ref={drop}
@@ -71,7 +76,12 @@ const PanelColumn = ({
       </p>
       <div className={clsx("rounded-xl flex flex-col gap-2 p-2")}>
         {tickets.map((ticket) => (
-          <PanelItemCard key={ticket.id} ticket={ticket} />
+          <PanelItemCard
+            key={ticket.id}
+            ticket={ticket}
+            reload={reload}
+            userName={userName}
+          />
         ))}
       </div>
     </div>

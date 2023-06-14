@@ -103,8 +103,8 @@ const AddItem = ({ userName }: AddItemProps) => {
     }
   };
 
-  const save = () => {
-    saveItem();
+  const save = async () => {
+    await saveItem();
     setTitle("");
     setDescription("");
     setDueDate("");

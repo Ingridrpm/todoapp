@@ -1,9 +1,9 @@
 import { getServerSession } from "next-auth/next";
+import { authOptions } from "../../auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import { authOptions } from "../../auth/[...nextauth]/route";
 
-/* CREATE */
+/* DELETE  */
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -13,21 +13,29 @@ export async function POST(req: Request) {
       include: { lists: true },
     });
     const listId = user?.lists[0]?.id!;
-    const { title, description, selectedAssignee, dueDate } = await req.json();
-    const item = await prisma.item.create({
-      data: {
-        title: title,
-        description: description,
-        assignee: parseInt(selectedAssignee),
-        list: { connect: { id: listId } },
-        dueDateTime: new Date(dueDate),
-        status: 1,
+    const { itemId } = await req.json();
+    console.log("llega 5");
+
+    const item = await prisma.item.findFirst({
+      where: {
+        id: parseInt(itemId),
+        listId: listId,
       },
     });
 
-    return NextResponse.json(item);
+    if (!item) {
+      throw new Error("Item not found or unauthorized");
+    }
+
+    await prisma.item.delete({
+      where: { id: parseInt(itemId) },
+    });
+
+    return NextResponse.json({
+      message: "Item deleted successfully",
+    });
   } catch (err: any) {
-    console.log("ERROR create item: ", err);
+    console.log("ERROR delete item:", err);
     return new NextResponse(
       JSON.stringify({
         error: err.message,

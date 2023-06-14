@@ -5,9 +5,11 @@ import { Ticket, State } from "./tabs-elemet";
 
 interface ToDoPanelProps {
   tickets: Ticket[];
+  reload: () => void;
+  userName: string;
 }
 
-const ToDoPanel = ({ tickets }: ToDoPanelProps) => {
+const ToDoPanel = ({ tickets, reload, userName }: ToDoPanelProps) => {
   const columns = ["Todo", "In Progress", "Done"];
   return (
     <DndProvider backend={HTML5Backend}>
@@ -20,6 +22,8 @@ const ToDoPanel = ({ tickets }: ToDoPanelProps) => {
               allTickets={tickets}
               key={columnState}
               columnState={columnState as State}
+              reload={reload}
+              userName={userName}
             />
           ))}
         </div>

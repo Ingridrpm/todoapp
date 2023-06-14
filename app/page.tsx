@@ -15,10 +15,7 @@ export default async function Home() {
 
   return (
     <div className="max-w-4xl mx-auto py-10 px-4">
-      <AddAssignee />
-      {"   "}
-      <AddItem userName={session.user?.name || ""} />
-      <TabsElement />
+      <TabsElement userName={session.user?.name || ""} />
     </div>
   );
 }
