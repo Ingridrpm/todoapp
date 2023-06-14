@@ -16,10 +16,10 @@ const Auth = () => {
           To-do App is a powerful and intuitive to-do app designed to simplify
           your task management. With To-do App, you can effortlessly create,
           track, and complete tasks, ensuring that you stay organized and
-          productive. Whether you're managing personal projects or collaborating
-          with a team, To-do App offers a seamless experience that keeps you on
-          top of your game. Sign up now and start taking control of your to-do
-          list.
+          productive. Whether you&apos;re managing personal projects or
+          collaborating with a team, To-do App offers a seamless experience that
+          keeps you on top of your game. Sign up now and start taking control of
+          your to-do list.
         </p>
         <div className="items-center justify-center space-y-4 sm:flex sm:space-y-0 sm:space-x-4">
           <LoginButton />
