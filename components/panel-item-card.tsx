@@ -61,8 +61,13 @@ const PanelItemCard = ({
   const foundAssignee = assignees.find(
     (assignee) => assignee.id + "" === ticket.assignee
   );
+
   const [assigneeName, setAssigneeName] = useState(
-    foundAssignee ? foundAssignee.name : null
+    foundAssignee
+      ? foundAssignee.name
+      : ticket.assignee === "0"
+      ? userName
+      : null
   );
 
   const [showModal, setShowModal] = useState(false);

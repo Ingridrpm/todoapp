@@ -31,7 +31,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             <header>
               <div className="flex items-center justify-between">
                 <a
-                  href="#"
+                  href="/"
                   className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
                 >
                   <img className="w-8 h-8 mr-2" src="/check.png" alt="logo" />

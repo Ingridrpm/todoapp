@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
 import { useTheme } from "next-themes";
+import { Alert } from "./alert";
 //import darkModeStyles from "datetime-dark-mode.css";
 //import "react-datetime-picker/dist/DateTimePicker.css";
 //import "react-calendar/dist/Calendar.css";
@@ -16,15 +17,17 @@ export interface Assignee {
 
 interface AddItemProps {
   userName: string;
+  reload: () => void;
 }
 
-const AddItem = ({ userName }: AddItemProps) => {
+const AddItem = ({ userName, reload }: AddItemProps) => {
   const [showModal, setShowModal] = useState(false);
   const [assignees, setAssignees] = useState([]);
   const [dueDate, setDueDate] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [selectedAssignee, setSelectedAssignee] = useState("");
+  const [selectedAssignee, setSelectedAssignee] = useState("0");
+  const [error, setError] = useState<string | null>(null);
 
   const { setTheme, theme } = useTheme();
 
@@ -66,12 +69,13 @@ const AddItem = ({ userName }: AddItemProps) => {
   };
 
   const refreshShowModal = () => {
+    setError(null);
     getAssignees();
     setShowModal(true);
   };
 
   const saveItem = async () => {
-    if (title.trim() !== "") {
+    if (title.trim() !== "" && dueDate.trim() !== "") {
       try {
         const response = await fetch("/api/items/create", {
           method: "POST",
@@ -89,24 +93,36 @@ const AddItem = ({ userName }: AddItemProps) => {
         if (response.ok) {
           const item = await response.json();
           console.log("item created:", item);
+          saved();
         } else {
           console.error("Failed to create item");
+          setError("Failed to create new task.");
         }
       } catch (error) {
         console.error("Error creating item:", error);
+        setError("Failed to create new task.");
       }
     } else {
-      console.log("ERROR, no title");
+      if (title.trim() !== "") {
+        //Due date missing
+        setError("Pick a due date for your new task.");
+      } else {
+        setError("Insert a title for your new task");
+      }
     }
   };
 
-  const save = async () => {
-    await saveItem();
+  const saved = () => {
+    reload();
     setTitle("");
     setDescription("");
     setDueDate("");
     setSelectedAssignee("");
     setShowModal(false);
+  };
+  const save = async () => {
+    setError(null);
+    await saveItem();
   };
 
   return (
@@ -147,6 +163,8 @@ const AddItem = ({ userName }: AddItemProps) => {
                   <h3 className="mb-4 text-xl font-medium text-gray-900 dark:text-white">
                     Add To-do Task
                   </h3>
+
+                  {error && <Alert>{error}</Alert>}
                   <form className="space-y-6" action="#">
                     <div>
                       <label

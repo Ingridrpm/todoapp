@@ -1,11 +1,13 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
+import { Alert } from "./alert";
 
 const AddAssignee = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [name, setName] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const toggleDropdown = () => {
     setShowDropdown((prevShowDropdown) => !prevShowDropdown);
@@ -16,6 +18,7 @@ const AddAssignee = () => {
   };
 
   const closeModal = () => {
+    setError(null);
     setShowModal(false);
   };
 
@@ -48,10 +51,18 @@ const AddAssignee = () => {
           console.log("Assignee created:", assignee);
         } else {
           console.error("Failed to create assignee");
+          setError("Failed to create assignee");
+          return;
         }
       } catch (error) {
         console.error("Error creating assignee:", error);
+
+        setError("Failed to create assignee");
+        return;
       }
+    } else {
+      setError("Enter assignee name");
+      return;
     }
     setName("");
     closeModal();
@@ -149,6 +160,8 @@ const AddAssignee = () => {
                     </svg>
                   </button>
                 </div>
+
+                {error && <Alert>{error}</Alert>}
                 <div className="mb-4">
                   <label
                     htmlFor="name"

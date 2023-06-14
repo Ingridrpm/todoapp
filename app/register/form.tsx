@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { signIn, signOut } from "next-auth/react";
+import { Alert } from "@/components/alert";
 
 const RegisterForm = () => {
   const [firstName, setFirstName] = useState("");
@@ -8,9 +9,28 @@ const RegisterForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const registerUser = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission
+    setError("");
+    if (
+      firstName === "" ||
+      lastName === "" ||
+      email === "" ||
+      password === "" ||
+      confirmPassword === ""
+    ) {
+      setError(
+        "All fields are required. Please fill in all the required information. "
+      );
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError(
+        "Password and Confirm Password fields should match. Please make sure they are identical."
+      );
+    }
 
     try {
       const response = await fetch("/api/register", {
@@ -31,14 +51,17 @@ const RegisterForm = () => {
         console.log("User and list created successfully.");
       } else {
         console.error("An error occurred while creating user and list.");
+        setError("An error occurred while creating user.");
       }
     } catch (error) {
       console.error("An error occurred while creating user and list:", error);
+      setError("An error occurred while creating user.");
     }
   };
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
+      {error && <Alert>{error}</Alert>}
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
