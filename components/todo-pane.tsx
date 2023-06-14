@@ -7,6 +7,7 @@ interface ToDoPanelProps {
   tickets: Ticket[];
   reload: () => void;
   userName: string;
+  assignees: {};
 }
 
 const ToDoPanel = ({ tickets, reload, userName }: ToDoPanelProps) => {

@@ -26,10 +26,7 @@ const AddItem = ({ userName }: AddItemProps) => {
   const [description, setDescription] = useState("");
   const [selectedAssignee, setSelectedAssignee] = useState("");
 
-  const isDarkTheme = () => {
-    const { setTheme, theme } = useTheme();
-    return theme === "dark";
-  };
+  const { setTheme, theme } = useTheme();
 
   const getAssignees = async () => {
     try {
@@ -116,7 +113,7 @@ const AddItem = ({ userName }: AddItemProps) => {
     <>
       <button
         style={{ float: "right" }}
-        className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
+        className="text-white bg-sky-700 hover:bg-sky-800 focus:ring-4 focus:ring-sky-300 dark:bg-sky-600 dark:hover:bg-sky-700 focus:outline-none dark:focus:ring-sky-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
         onClick={refreshShowModal}
         type="button"
       >
@@ -218,7 +215,7 @@ const AddItem = ({ userName }: AddItemProps) => {
                         Due date
                       </label>
                       <div>
-                        {isDarkTheme() && (
+                        {theme === "dark" && (
                           <style>{`
                               .rdtPicker {
                                 background: #333333;

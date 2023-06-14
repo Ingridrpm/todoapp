@@ -3,8 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { authOptions } from "../../auth/[...nextauth]/route";
 
-/* DELETE */
-export async function POST(req: Request) {
+/* UPDATE */
+export async function PUT(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     const userId = parseInt((session?.user as { id: string }).id);
@@ -13,18 +13,24 @@ export async function POST(req: Request) {
       include: { lists: true },
     });
     const listId = user?.lists[0]?.id!;
-    const { assigneeId } = await req.json();
+    const { assigneeId, name } = await req.json();
 
-    await prisma.assignee.deleteMany({
+    const updatedAssignee = await prisma.assignee.updateMany({
       where: {
         id: assigneeId,
         listId: listId,
       },
+      data: {
+        name: name,
+      },
     });
 
-    return new NextResponse(JSON.stringify({ success: true }), { status: 200 });
+    return new NextResponse(
+      JSON.stringify({ success: true, assignee: updatedAssignee }),
+      { status: 200 }
+    );
   } catch (err: any) {
-    console.log("ERROR delete assignee: ", err);
+    console.log("ERROR update assignee: ", err);
     return new NextResponse(JSON.stringify({ error: err.message }), {
       status: 500,
     });

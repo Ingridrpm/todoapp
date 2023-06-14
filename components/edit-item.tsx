@@ -103,10 +103,7 @@ const EditItem = ({
   const [description, setDescription] = useState(_description);
   const [selectedAssignee, setSelectedAssignee] = useState(_selectedAssignee);
 
-  const isDarkTheme = () => {
-    const { setTheme, theme } = useTheme();
-    return theme === "dark";
-  };
+  const { setTheme, theme } = useTheme();
 
   const getAssignees = async () => {
     try {
@@ -264,7 +261,7 @@ const EditItem = ({
                     Due date
                   </label>
                   <div>
-                    {isDarkTheme() && (
+                    {theme === "dark" && (
                       <style>{`
                               .rdtPicker {
                                 background: #333333;

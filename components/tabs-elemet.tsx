@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import ToDoPanel from "./todo-pane";
 import ItemTable from "./item-table";
 import { List } from "@prisma/client";
-import { useRouter, redirect } from "next/navigation";
 import AddAssignee from "./add-assignee";
 import AddItem from "./add-item";
 
@@ -19,7 +18,6 @@ export type Ticket = {
 };
 
 function TabsElement({ userName }: { userName: string }) {
-  const router = useRouter();
   const [selectedTab, setSelectedTab] = useState("board");
 
   const tabChange = (tab: any) => {
@@ -40,6 +38,8 @@ function TabsElement({ userName }: { userName: string }) {
     listId: number;
     list: List;
   }
+
+  const [assignees, setAssignees] = useState([]);
 
   useEffect(() => {
     const getItems = async () => {
@@ -71,11 +71,31 @@ function TabsElement({ userName }: { userName: string }) {
     };
 
     getItems();
-  }, []);
 
-  function delay(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+    const getAssignees = async () => {
+      try {
+        const response = await fetch("/api/assignees/read", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          const assignee = await response.json();
+          setAssignees(assignee);
+        } else {
+          console.error("Failed to read assignees");
+          return [];
+        }
+      } catch (error) {
+        console.error("Error reading assignees:", error);
+        return [];
+      }
+    };
+
+    getAssignees();
+  }, []);
 
   const reload = async () => {
     const getItems = async () => {
@@ -107,8 +127,30 @@ function TabsElement({ userName }: { userName: string }) {
     };
 
     getItems();
+    const getAssignees = async () => {
+      try {
+        const response = await fetch("/api/assignees/read", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          const assignee = await response.json();
+          setAssignees(assignee);
+        } else {
+          console.error("Failed to read assignees");
+          return [];
+        }
+      } catch (error) {
+        console.error("Error reading assignees:", error);
+        return [];
+      }
+    };
+
+    getAssignees();
   };
-  //const { state, moveTicket } = useTicketManager(tickets);
 
   return (
     <>
@@ -124,7 +166,7 @@ function TabsElement({ userName }: { userName: string }) {
                 href="#"
                 className={`${
                   selectedTab === "board"
-                    ? "inline-flex p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500 group"
+                    ? "inline-flex p-4 text-sky-600 border-b-2 border-sky-600 rounded-t-lg active dark:text-sky-500 dark:border-sky-500 group"
                     : "inline-flex p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group"
                 }`}
                 onClick={() => tabChange("board")}
@@ -133,7 +175,7 @@ function TabsElement({ userName }: { userName: string }) {
                   aria-hidden="true"
                   className={`w-5 h-5 mr-2 ${
                     selectedTab === "board"
-                      ? "w-5 h-5 mr-2 text-blue-600 dark:text-blue-500"
+                      ? "w-5 h-5 mr-2 text-sky-600 dark:text-sky-500"
                       : "w-5 h-5 mr-2 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300"
                   }`}
                   fill="currentColor"
@@ -154,7 +196,7 @@ function TabsElement({ userName }: { userName: string }) {
                 href="#"
                 className={`${
                   selectedTab === "allTasks"
-                    ? "inline-flex p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500 group"
+                    ? "inline-flex p-4 text-sky-600 border-b-2 border-sky-600 rounded-t-lg active dark:text-sky-500 dark:border-sky-500 group"
                     : "inline-flex p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group"
                 }`}
                 onClick={() => tabChange("allTasks")}
@@ -163,7 +205,7 @@ function TabsElement({ userName }: { userName: string }) {
                   aria-hidden="true"
                   className={`w-5 h-5 mr-2 ${
                     selectedTab === "allTasks"
-                      ? "w-5 h-5 mr-2 text-blue-600 dark:text-blue-500"
+                      ? "w-5 h-5 mr-2 text-sky-600 dark:text-sky-500"
                       : "w-5 h-5 mr-2 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300"
                   }`}
                   fill="currentColor"
@@ -184,6 +226,7 @@ function TabsElement({ userName }: { userName: string }) {
                 tickets={tickets}
                 reload={reload}
                 userName={userName}
+                assignees={assignees}
               />
             </>
           ) : (
@@ -192,6 +235,7 @@ function TabsElement({ userName }: { userName: string }) {
                 tickets={tickets}
                 reload={reload}
                 userName={userName}
+                assignees={assignees}
               />
             </>
           )}
