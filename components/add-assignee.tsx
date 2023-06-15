@@ -5,8 +5,10 @@ import EditAssignees from "./edit-assignees";
 
 const AddAssignee = ({
   assignees,
+  reload,
 }: {
   assignees: { id: string; name: string; listId: string }[];
+  reload: () => void;
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -74,6 +76,10 @@ const AddAssignee = ({
     setShowDropdown(false);
   };
 
+  function reloadContent(): void {
+    reload();
+  }
+
   return (
     <>
       <div className="relative">
@@ -125,7 +131,7 @@ const AddAssignee = ({
                 </a>
               </li>
               <li>
-                <EditAssignees assignees={assignees} />
+                <EditAssignees assignees={assignees} reload={reloadContent} />
               </li>
             </ul>
           </div>

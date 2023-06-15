@@ -153,10 +153,14 @@ function TabsElement({ userName }: { userName: string }) {
     getAssignees();
   };
 
+  function reloadContent(): void {
+    reload();
+  }
+
   return (
     <>
       {" "}
-      <AddAssignee assignees={assignees} />
+      <AddAssignee assignees={assignees} reload={reloadContent} />
       {"   "}
       <AddItem userName={userName} reload={reload} />
       <>
