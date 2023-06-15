@@ -25,12 +25,12 @@ const ToDoPanel = ({
         <div className="flex w-full gap-4">
           {columns.map((columnState) => (
             <PanelColumn
+              assignees={assignees}
               allTickets={tickets}
               key={columnState}
               columnState={columnState as State}
               reload={reload}
               userName={userName}
-              assignees={assignees}
             />
           ))}
         </div>

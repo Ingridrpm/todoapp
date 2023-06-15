@@ -4,11 +4,8 @@ import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
 import { useTheme } from "next-themes";
 import { Alert } from "./alert";
-//import darkModeStyles from "datetime-dark-mode.css";
-//import "react-datetime-picker/dist/DateTimePicker.css";
-//import "react-calendar/dist/Calendar.css";
-//import "react-clock/dist/Clock.css";
-//import DateTimePicker from "react-datetime-picker";
+
+import clsx from "clsx";
 
 export interface Assignee {
   id: number;
@@ -16,11 +13,12 @@ export interface Assignee {
 }
 
 interface AddItemProps {
+  state: string;
   userName: string;
   reload: () => void;
 }
 
-const AddItem = ({ userName, reload }: AddItemProps) => {
+const AddItemCard = ({ state, userName, reload }: AddItemProps) => {
   const [showModal, setShowModal] = useState(false);
   const [assignees, setAssignees] = useState([]);
   const [dueDate, setDueDate] = useState("");
@@ -104,7 +102,7 @@ const AddItem = ({ userName, reload }: AddItemProps) => {
             description,
             selectedAssignee,
             dueDate,
-            state: 1,
+            state,
           }),
         });
 
@@ -145,14 +143,19 @@ const AddItem = ({ userName, reload }: AddItemProps) => {
 
   return (
     <>
-      <button
-        style={{ float: "right" }}
-        className="text-white bg-sky-700 hover:bg-sky-800 focus:ring-4 focus:ring-sky-300 dark:bg-sky-600 dark:hover:bg-sky-700 focus:outline-none dark:focus:ring-sky-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
+      <div
         onClick={refreshShowModal}
-        type="button"
+        className={`${
+          state === "Todo"
+            ? "bg-gray-400 dark:bg-gray-800"
+            : state === "In Progress"
+            ? "bg-blue-200 dark:bg-blue-700"
+            : "bg-green-200 dark:bg-green-700"
+        } cursor-pointer rounded-xl p-2 text-sm text-center flex flex-col justify-around text-black dark:text-white min-h-[40px]`}
       >
-        + Add Task
-      </button>
+        <span className="w-full">+ New</span>
+      </div>
+
       {showModal && (
         <>
           <div className="flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none ">
@@ -312,4 +315,4 @@ const AddItem = ({ userName, reload }: AddItemProps) => {
   );
 };
 
-export default AddItem;
+export default AddItemCard;

@@ -132,8 +132,13 @@ const EditItem = ({
     getAssignees();
   }, []);
 
-  const dateChange = (momentObj: any) => {
-    setDueDate(momentObj.format("YYYY-MM-DD HH:mm:ss"));
+  const dateChange = (date: any) => {
+    if (date && date.format && date.isValid()) {
+      const formattedDate = date.format("YYYY-MM-DD HH:mm:ss");
+      setDueDate(formattedDate);
+    } else {
+      setDueDate("");
+    }
   };
 
   const changeAssignee = async (e: any) => {

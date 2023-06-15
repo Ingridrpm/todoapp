@@ -3,6 +3,7 @@ import { useDrop } from "react-dnd";
 import { PropsWithChildren } from "react";
 import PanelItemCard from "./panel-item-card";
 import { State, Ticket } from "./tabs-elemet";
+import AddItemCard from "./add-item-card";
 
 const updateItemState = async (itemId: string, newStatus: string) => {
   try {
@@ -79,13 +80,14 @@ const PanelColumn = ({
       <div className={clsx("rounded-xl flex flex-col gap-2 p-2")}>
         {tickets.map((ticket) => (
           <PanelItemCard
+            assignees={assignees}
             key={ticket.id}
             ticket={ticket}
             reload={reload}
             userName={userName}
-            assignees={assignees}
           />
         ))}
+        <AddItemCard state={columnState} userName={userName} reload={reload} />
       </div>
     </div>
   );

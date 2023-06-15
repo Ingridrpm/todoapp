@@ -16,6 +16,8 @@ const PanelItemCard = ({
   userName: string;
   assignees: { id: string; name: string; listId: string }[];
 }) => {
+  const as = assignees;
+
   const [{ isDragging }, drag, dragPreview] = useDrag<
     Ticket,
     void,

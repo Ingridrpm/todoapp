@@ -20,6 +20,34 @@ export type Ticket = {
 function TabsElement({ userName }: { userName: string }) {
   const [selectedTab, setSelectedTab] = useState("board");
 
+  const [assignees, setAssignees] = useState([]);
+  /*useEffect(() => {
+    
+  }, []);*/
+  const getAssignees = async () => {
+    try {
+      const response = await fetch("/api/assignees/read", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const assignee = await response.json();
+        setAssignees(assignee);
+      } else {
+        console.error("Failed to read assignees");
+        return [];
+      }
+    } catch (error) {
+      console.error("Error reading assignees:", error);
+      return [];
+    }
+  };
+
+  getAssignees();
+
   const tabChange = (tab: any) => {
     setSelectedTab(tab);
   };
@@ -38,8 +66,6 @@ function TabsElement({ userName }: { userName: string }) {
     listId: number;
     list: List;
   }
-
-  const [assignees, setAssignees] = useState([]);
 
   useEffect(() => {
     const getItems = async () => {
@@ -69,32 +95,7 @@ function TabsElement({ userName }: { userName: string }) {
         console.error("Error reading items:", error);
       }
     };
-
     getItems();
-
-    const getAssignees = async () => {
-      try {
-        const response = await fetch("/api/assignees/read", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (response.ok) {
-          const assignee = await response.json();
-          setAssignees(assignee);
-        } else {
-          console.error("Failed to read assignees");
-          return [];
-        }
-      } catch (error) {
-        console.error("Error reading assignees:", error);
-        return [];
-      }
-    };
-
-    getAssignees();
   }, []);
 
   const reload = async () => {
@@ -155,7 +156,7 @@ function TabsElement({ userName }: { userName: string }) {
   return (
     <>
       {" "}
-      <AddAssignee />
+      <AddAssignee assignees={assignees} />
       {"   "}
       <AddItem userName={userName} reload={reload} />
       <>
@@ -223,10 +224,10 @@ function TabsElement({ userName }: { userName: string }) {
           {selectedTab === "board" ? (
             <>
               <ToDoPanel
-                tickets={tickets}
+                assignees={assignees}
                 reload={reload}
                 userName={userName}
-                assignees={assignees}
+                tickets={tickets}
               />
             </>
           ) : (

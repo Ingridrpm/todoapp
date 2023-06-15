@@ -7,7 +7,7 @@ export const LoginButton = () => {
   return (
     <button
       type="button"
-      onClick={() => signIn()}
+      onClick={() => signIn(undefined, { callbackUrl: "/" })}
       className="text-white bg-sky-700 hover:bg-sky-800 focus:ring-4 focus:outline-none focus:ring-sky-300 font-medium rounded-lg text-base px-6 py-3.5 text-center dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-800"
     >
       Sign in

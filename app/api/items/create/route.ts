@@ -13,7 +13,8 @@ export async function POST(req: Request) {
       include: { lists: true },
     });
     const listId = user?.lists[0]?.id!;
-    const { title, description, selectedAssignee, dueDate } = await req.json();
+    const { title, description, selectedAssignee, dueDate, state } =
+      await req.json();
     const item = await prisma.item.create({
       data: {
         title: title,
@@ -21,7 +22,7 @@ export async function POST(req: Request) {
         assignee: parseInt(selectedAssignee),
         list: { connect: { id: listId } },
         dueDateTime: new Date(dueDate),
-        status: 1,
+        status: parseInt(state),
       },
     });
 

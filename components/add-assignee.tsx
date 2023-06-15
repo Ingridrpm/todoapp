@@ -1,8 +1,13 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { Alert } from "./alert";
+import EditAssignees from "./edit-assignees";
 
-const AddAssignee = () => {
+const AddAssignee = ({
+  assignees,
+}: {
+  assignees: { id: string; name: string; listId: string }[];
+}) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [name, setName] = useState("");
@@ -120,12 +125,7 @@ const AddAssignee = () => {
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
-                  Edit collaborators
-                </a>
+                <EditAssignees assignees={assignees} />
               </li>
             </ul>
           </div>
