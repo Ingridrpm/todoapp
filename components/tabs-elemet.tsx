@@ -19,39 +19,10 @@ export type Ticket = {
 
 function TabsElement({ userName }: { userName: string }) {
   const [selectedTab, setSelectedTab] = useState("board");
-
-  const [assignees, setAssignees] = useState([]);
-  /*useEffect(() => {
-    
-  }, []);*/
-  const getAssignees = async () => {
-    try {
-      const response = await fetch("/api/assignees/read", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        const assignee = await response.json();
-        setAssignees(assignee);
-      } else {
-        console.error("Failed to read assignees");
-        return [];
-      }
-    } catch (error) {
-      console.error("Error reading assignees:", error);
-      return [];
-    }
-  };
-
-  getAssignees();
-
   const tabChange = (tab: any) => {
     setSelectedTab(tab);
   };
-
+  const [assignees, setAssignees] = useState([]);
   const tks: Ticket[] = [];
   const [items, setItems] = useState([]);
   const [tickets, setTickets] = useState(tks);
@@ -68,6 +39,25 @@ function TabsElement({ userName }: { userName: string }) {
   }
 
   useEffect(() => {
+    const getAssignees = async () => {
+      try {
+        const response = await fetch("/api/assignees/read", {
+          cache: "no-store",
+        });
+
+        if (response.ok) {
+          const assignee = await response.json();
+          setAssignees(assignee);
+        } else {
+          console.error("Failed to read assignees");
+        }
+      } catch (error) {
+        console.error("Error reading assignees:", error);
+      }
+    };
+
+    getAssignees();
+
     const getItems = async () => {
       try {
         const response = await fetch("/api/items/read");
@@ -130,6 +120,27 @@ function TabsElement({ userName }: { userName: string }) {
     getItems();
     const getAssignees = async () => {
       try {
+        const response = await fetch("/api/assignees/read");
+
+        if (response.ok) {
+          const assignee = await response.json();
+          setAssignees(assignee);
+        } else {
+          console.error("Failed to read assignees");
+          return [];
+        }
+      } catch (error) {
+        console.error("Error reading assignees:", error);
+        return [];
+      }
+    };
+
+    getAssignees();
+  };
+
+  const reloadAssignees = () => {
+    const getAssignees = async () => {
+      try {
         const response = await fetch("/api/assignees/read", {
           method: "GET",
           headers: {
@@ -153,14 +164,18 @@ function TabsElement({ userName }: { userName: string }) {
     getAssignees();
   };
 
-  function reloadContent(): void {
+  const closeAddAssignee = () => {
     reload();
-  }
+  };
 
   return (
     <>
       {" "}
-      <AddAssignee assignees={assignees} reload={reloadContent} />
+      <AddAssignee
+        assignees={assignees}
+        reloadAssignees={reloadAssignees}
+        close={closeAddAssignee}
+      />
       {"   "}
       <AddItem userName={userName} reload={reload} />
       <>

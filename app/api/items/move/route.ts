@@ -12,7 +12,6 @@ export async function PUT(req: Request) {
 
     return NextResponse.json(updatedItem);
   } catch (err: any) {
-    console.log("ERROR updating item: ", err);
     return new NextResponse(
       JSON.stringify({
         error: err.message,

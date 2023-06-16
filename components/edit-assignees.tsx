@@ -9,10 +9,12 @@ export interface Assignee {
 
 const EditAssignees = ({
   assignees,
-  reload,
+  closeEditModal,
+  reloadAssignees,
 }: {
   assignees: { id: string; name: string; listId: string }[];
-  reload: () => void;
+  closeEditModal: () => void;
+  reloadAssignees: () => void;
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [editingAssignee, setEditingAssignee] = useState(false);
@@ -20,6 +22,7 @@ const EditAssignees = ({
   const [editingId, setEditingId] = useState("");
 
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const openModal = () => {
     setShowModal(true);
@@ -27,11 +30,13 @@ const EditAssignees = ({
 
   const closeModal = () => {
     setError(null);
+    setSuccess(null);
     setShowModal(false);
-    reload();
+    closeEditModal();
+    //reload();
   };
 
-  const editAssignee = async (id: string) => {
+  const fetchEditAssignee = async (id: string) => {
     try {
       const response = await fetch("/api/assignees/update", {
         method: "PUT",
@@ -43,7 +48,7 @@ const EditAssignees = ({
 
       if (response.ok) {
         const assignee = await response.json();
-        console.log("Assignee updated:", assignee);
+        setSuccess("Collaborator updated");
         setEditingAssignee(false);
       } else {
         console.error("Failed to update assignee");
@@ -56,6 +61,15 @@ const EditAssignees = ({
     }
   };
 
+  const editAssignee = async (id: string) => {
+    if (editingName !== "") {
+      await fetchEditAssignee(id);
+      reloadAssignees();
+    } else {
+      setError("Enter assignee name");
+    }
+  };
+
   function goToEdit(id: string, name: string) {
     setEditingId(id);
     setEditingName(name);
@@ -63,9 +77,10 @@ const EditAssignees = ({
   }
 
   function cancelEdit() {
-    setEditingAssignee(false);
+    setError(null);
     setEditingId("");
     setEditingName("");
+    setEditingAssignee(false);
   }
 
   async function deleteAssignee() {
@@ -80,7 +95,8 @@ const EditAssignees = ({
 
       if (response.ok) {
         const assignee = await response.json();
-        console.log("Assignee deleted:", assignee);
+        setSuccess("Collaborator deleted");
+
         setEditingAssignee(false);
       } else {
         console.error("Failed to delete assignee");

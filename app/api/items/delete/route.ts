@@ -14,7 +14,6 @@ export async function POST(req: Request) {
     });
     const listId = user?.lists[0]?.id!;
     const { itemId } = await req.json();
-    console.log("llega 5");
 
     const item = await prisma.item.findFirst({
       where: {
@@ -35,7 +34,6 @@ export async function POST(req: Request) {
       message: "Item deleted successfully",
     });
   } catch (err: any) {
-    console.log("ERROR delete item:", err);
     return new NextResponse(
       JSON.stringify({
         error: err.message,

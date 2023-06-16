@@ -5,16 +5,19 @@ import EditAssignees from "./edit-assignees";
 
 const AddAssignee = ({
   assignees,
-  reload,
+  reloadAssignees,
+  close,
 }: {
   assignees: { id: string; name: string; listId: string }[];
-  reload: () => void;
+  reloadAssignees: () => void;
+  close: () => void;
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [name, setName] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const toggleDropdown = () => {
     setShowDropdown((prevShowDropdown) => !prevShowDropdown);
@@ -26,7 +29,9 @@ const AddAssignee = ({
 
   const closeModal = () => {
     setError(null);
+    setSuccess(null);
     setShowModal(false);
+    close();
   };
 
   useEffect(() => {
@@ -55,7 +60,7 @@ const AddAssignee = ({
 
         if (response.ok) {
           const assignee = await response.json();
-          console.log("Assignee created:", assignee);
+          setSuccess("Assignee created:");
         } else {
           console.error("Failed to create assignee");
           setError("Failed to create assignee");
@@ -76,9 +81,10 @@ const AddAssignee = ({
     setShowDropdown(false);
   };
 
-  function reloadContent(): void {
-    reload();
-  }
+  const closeEditModal = () => {
+    //reloadAssignees();
+    setShowDropdown(false);
+  };
 
   return (
     <>
@@ -131,7 +137,11 @@ const AddAssignee = ({
                 </a>
               </li>
               <li>
-                <EditAssignees assignees={assignees} reload={reloadContent} />
+                <EditAssignees
+                  assignees={assignees}
+                  closeEditModal={closeEditModal}
+                  reloadAssignees={reloadAssignees}
+                />
               </li>
             </ul>
           </div>

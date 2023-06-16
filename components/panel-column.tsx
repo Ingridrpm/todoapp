@@ -21,7 +21,7 @@ const updateItemState = async (itemId: string, newStatus: string) => {
 
     if (response.ok) {
       const item = await response.json();
-      console.log("Item updated:", item);
+      //console.log("Item updated:", item);
     } else {
       console.error("Failed to update item");
     }

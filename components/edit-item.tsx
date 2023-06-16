@@ -49,18 +49,17 @@ const saveItem = async (
 
       if (response.ok) {
         const item = await response.json();
-        console.log("item created:", item);
         return item;
       } else {
         console.error("Failed to create item");
         return "";
       }
     } catch (error) {
-      console.error("Error creating item:", error);
+      console.error("Failed to create item", error);
       return error;
     }
   } else {
-    console.log("ERROR, no title");
+    console.log("No title");
     return "no title";
   }
 };
@@ -79,7 +78,7 @@ const deleteItem = async (id: string) => {
 
     if (response.ok) {
       const item = await response.json();
-      console.log("item deleted:", item);
+      //console.log("item deleted:", item);
     } else {
       console.error("Failed to delete item");
     }
@@ -143,9 +142,6 @@ const EditItem = ({
 
   const changeAssignee = async (e: any) => {
     setSelectedAssignee(e.target.value);
-    console.log("--------------------------");
-    console.log(e.target.value);
-    console.log("--------------------------");
   };
 
   const save = async () => {
@@ -156,7 +152,6 @@ const EditItem = ({
       selectedAssignee,
       dueDate
     );
-    console.log(await si);
     setTitle("");
     setDescription("");
     setDueDate("");
@@ -165,7 +160,6 @@ const EditItem = ({
   };
 
   const deleteI = async () => {
-    console.log("to delete: " + id);
     await deleteItem(id);
     closeModal();
   };

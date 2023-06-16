@@ -26,6 +26,7 @@ const AddItemCard = ({ state, userName, reload }: AddItemProps) => {
   const [description, setDescription] = useState("");
   const [selectedAssignee, setSelectedAssignee] = useState("0");
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const { setTheme, theme } = useTheme();
 
@@ -84,6 +85,7 @@ const AddItemCard = ({ state, userName, reload }: AddItemProps) => {
   };
 
   const refreshShowModal = () => {
+    setSuccess(null);
     setError(null);
     getAssignees();
     setShowModal(true);
@@ -108,7 +110,7 @@ const AddItemCard = ({ state, userName, reload }: AddItemProps) => {
 
         if (response.ok) {
           const item = await response.json();
-          console.log("item created:", item);
+          setSuccess("Task created");
           saved();
         } else {
           console.error("Failed to create item");

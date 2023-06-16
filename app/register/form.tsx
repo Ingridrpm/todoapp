@@ -48,7 +48,6 @@ const RegisterForm = () => {
 
       if (response.ok) {
         signIn();
-        console.log("User and list created successfully.");
       } else {
         console.error("An error occurred while creating user and list.");
         setError("An error occurred while creating user.");

@@ -24,7 +24,6 @@ export async function POST(req: Request) {
 
     return new NextResponse(JSON.stringify({ success: true }), { status: 200 });
   } catch (err: any) {
-    console.log("ERROR delete assignee: ", err);
     return new NextResponse(JSON.stringify({ error: err.message }), {
       status: 500,
     });

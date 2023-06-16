@@ -83,6 +83,12 @@ const PanelItemCard = ({
     setShowModal(true);
   };
 
+  const getAssigneeNameById = (id: string) => {
+    if (id === "0") return userName;
+    const foundAssignee = assignees.find((assignee) => assignee.id + "" === id);
+    return foundAssignee ? foundAssignee.name : null;
+  };
+
   return (
     <>
       <div
@@ -138,7 +144,7 @@ const PanelItemCard = ({
             </svg>
           </span>
           <p className="text-xs text-gray-900 dark:text-white">
-            {assigneeName}
+            {getAssigneeNameById(ticket.assignee)}
           </p>
         </span>
         <span

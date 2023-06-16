@@ -30,7 +30,6 @@ export async function PUT(req: Request) {
       { status: 200 }
     );
   } catch (err: any) {
-    console.log("ERROR update assignee: ", err);
     return new NextResponse(JSON.stringify({ error: err.message }), {
       status: 500,
     });
