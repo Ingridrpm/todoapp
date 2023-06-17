@@ -28,6 +28,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(item);
   } catch (err: any) {
+    console.error("ERROR", err);
     return new NextResponse(
       JSON.stringify({
         error: err.message,

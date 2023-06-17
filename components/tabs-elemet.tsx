@@ -6,7 +6,7 @@ import { List } from "@prisma/client";
 import AddAssignee from "./add-assignee";
 import AddItem from "./add-item";
 
-export type State = "Todo" | "In Progress" | "Done";
+export type State = "Not Started" | "In Progress" | "Done";
 
 export type Ticket = {
   title: string;
@@ -19,6 +19,7 @@ export type Ticket = {
 
 function TabsElement({ userName }: { userName: string }) {
   const [selectedTab, setSelectedTab] = useState("board");
+
   const tabChange = (tab: any) => {
     setSelectedTab(tab);
   };
@@ -41,9 +42,7 @@ function TabsElement({ userName }: { userName: string }) {
   useEffect(() => {
     const getAssignees = async () => {
       try {
-        const response = await fetch("/api/assignees/read", {
-          cache: "no-store",
-        });
+        const response = await fetch("/api/assignees/read");
 
         if (response.ok) {
           const assignee = await response.json();
@@ -71,7 +70,7 @@ function TabsElement({ userName }: { userName: string }) {
             dueDateTime: item.dueDateTime,
             state:
               item.status === 1
-                ? "Todo"
+                ? "Not Started"
                 : item.status === 2
                 ? "In Progress"
                 : "Done",
@@ -91,7 +90,9 @@ function TabsElement({ userName }: { userName: string }) {
   const reload = async () => {
     const getItems = async () => {
       try {
-        const response = await fetch("/api/items/read");
+        const response = await fetch("/api/items/read", {
+          cache: "no-store",
+        });
         if (response.ok) {
           const items = await response.json();
           const tickets = items.map((item: Item) => ({
@@ -102,7 +103,7 @@ function TabsElement({ userName }: { userName: string }) {
             dueDateTime: item.dueDateTime,
             state:
               item.status === 1
-                ? "Todo"
+                ? "Not Started"
                 : item.status === 2
                 ? "In Progress"
                 : "Done",
@@ -117,10 +118,12 @@ function TabsElement({ userName }: { userName: string }) {
       }
     };
 
-    getItems();
+    await getItems();
     const getAssignees = async () => {
       try {
-        const response = await fetch("/api/assignees/read");
+        const response = await fetch("/api/assignees/read", {
+          cache: "no-store",
+        });
 
         if (response.ok) {
           const assignee = await response.json();
@@ -135,7 +138,7 @@ function TabsElement({ userName }: { userName: string }) {
       }
     };
 
-    getAssignees();
+    await getAssignees();
   };
 
   const reloadAssignees = () => {
@@ -166,6 +169,55 @@ function TabsElement({ userName }: { userName: string }) {
 
   const closeAddAssignee = () => {
     reload();
+  };
+
+  const getTickets = async (): Promise<Ticket[]> => {
+    const getAssignees = async () => {
+      try {
+        const response = await fetch("/api/assignees/read");
+
+        if (response.ok) {
+          const assignee = await response.json();
+          setAssignees(assignee);
+        } else {
+          console.error("Failed to read assignees");
+        }
+      } catch (error) {
+        console.error("Error reading assignees:", error);
+      }
+    };
+
+    await getAssignees();
+
+    const getItems = async () => {
+      try {
+        const response = await fetch("/api/items/read");
+        if (response.ok) {
+          const items = await response.json();
+          const tickets = items.map((item: Item) => ({
+            id: item.id.toString(),
+            title: item.title,
+            description: item.description || "",
+            assignee: item.assignee.toString(),
+            dueDateTime: item.dueDateTime,
+            state:
+              item.status === 1
+                ? "Not Started"
+                : item.status === 2
+                ? "In Progress"
+                : "Done",
+          }));
+          setItems(items);
+          setTickets(tickets);
+        } else {
+          console.error("Failed to read items");
+        }
+      } catch (error) {
+        console.error("Error reading items:", error);
+      }
+    };
+    await getItems();
+    return tickets;
   };
 
   return (
@@ -247,6 +299,7 @@ function TabsElement({ userName }: { userName: string }) {
                 reload={reload}
                 userName={userName}
                 tickets={tickets}
+                getTickets={getTickets}
               />
             </>
           ) : (

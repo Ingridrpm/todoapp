@@ -18,7 +18,7 @@ const ItemTable = ({
 }: ItemTableProps) => {
   const t: Ticket = {
     title: "",
-    state: "Todo",
+    state: "Not Started",
     id: "",
     description: null,
     assignee: "",

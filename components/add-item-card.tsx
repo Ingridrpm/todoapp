@@ -104,7 +104,7 @@ const AddItemCard = ({ state, userName, reload }: AddItemProps) => {
             description,
             selectedAssignee,
             dueDate,
-            state,
+            state: state === "Done" ? 3 : state === "Not Started" ? 1 : 2,
           }),
         });
 
@@ -113,7 +113,7 @@ const AddItemCard = ({ state, userName, reload }: AddItemProps) => {
           setSuccess("Task created");
           saved();
         } else {
-          console.error("Failed to create item");
+          console.error("Failed to create item", response);
           setError("Failed to create new task.");
         }
       } catch (error) {
@@ -148,7 +148,7 @@ const AddItemCard = ({ state, userName, reload }: AddItemProps) => {
       <div
         onClick={refreshShowModal}
         className={`${
-          state === "Todo"
+          state === "Not Started"
             ? "bg-gray-400 dark:bg-gray-800"
             : state === "In Progress"
             ? "bg-blue-200 dark:bg-blue-700"

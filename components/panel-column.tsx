@@ -4,31 +4,8 @@ import { PropsWithChildren } from "react";
 import PanelItemCard from "./panel-item-card";
 import { State, Ticket } from "./tabs-elemet";
 import AddItemCard from "./add-item-card";
-
-const updateItemState = async (itemId: string, newStatus: string) => {
-  try {
-    const response = await fetch("/api/items/move", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        itemId: itemId,
-        newStatus:
-          newStatus === "Todo" ? 1 : newStatus === "In Progress" ? 2 : 3,
-      }),
-    });
-
-    if (response.ok) {
-      const item = await response.json();
-      //console.log("Item updated:", item);
-    } else {
-      console.error("Failed to update item");
-    }
-  } catch (error) {
-    console.error("Error updating item:", error);
-  }
-};
+//import { useRouter } from "next/dist/client/router";
+import { useRouter } from "next/navigation";
 
 const PanelColumn = ({
   columnState,
@@ -36,14 +13,45 @@ const PanelColumn = ({
   reload,
   userName,
   assignees,
+  getTickets,
 }: PropsWithChildren<{
   columnState: State;
   allTickets: Ticket[];
   userName: string;
   reload: () => void;
   assignees: { id: string; name: string; listId: string }[];
+  getTickets: () => Promise<Ticket[]>;
 }>) => {
-  const tickets: Ticket[] = [];
+  const updateItemState = async (itemId: string, newStatus: string) => {
+    try {
+      const response = await fetch("/api/items/move", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          itemId: itemId,
+          newStatus:
+            newStatus === "Not Started"
+              ? 1
+              : newStatus === "In Progress"
+              ? 2
+              : 3,
+        }),
+      });
+
+      if (response.ok) {
+        const item = await response.json();
+        console.log("Item updated:", item);
+      } else {
+        console.error("Failed to update item");
+      }
+    } catch (error) {
+      console.error("Error updating item:", error);
+    }
+  };
+
+  let tickets: Ticket[] = [];
   allTickets.map((ticket) => {
     if (ticket.state === columnState) tickets.push(ticket);
   });
@@ -54,14 +62,27 @@ const PanelColumn = ({
   >(() => ({
     accept: "ticket",
     drop: (ticket) => {
-      ticket.state = columnState;
-      updateItemState(ticket.id, columnState);
+      //ticket.state = columnState;
+      //updateItemState(ticket.id, columnState);
+      moveItem(ticket);
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),
     }),
   }));
+
+  const router = useRouter();
+  const moveItem = async (ticket: Ticket) => {
+    ticket.state = columnState;
+    await updateItemState(ticket.id, columnState);
+    await reload();
+    //tickets = [];
+    //const tkts: Ticket[] = await getTickets();
+    //tkts.map((ticket) => {
+    //  if (ticket.state === columnState) tickets.push(ticket);
+    //});
+  };
 
   return (
     <div

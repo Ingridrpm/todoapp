@@ -95,7 +95,7 @@ const PanelItemCard = ({
         ref={drag}
         className={clsx(
           `${
-            ticket.state === "Todo"
+            ticket.state === "Not Started"
               ? "bg-gray-400 dark:bg-gray-800"
               : ticket.state === "In Progress"
               ? "bg-blue-200 dark:bg-blue-700"
