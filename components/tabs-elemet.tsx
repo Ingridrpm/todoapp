@@ -88,6 +88,7 @@ function TabsElement({ userName }: { userName: string }) {
   }, []);
 
   const reload = async () => {
+    setSelectedTab("");
     const getItems = async () => {
       try {
         const response = await fetch("/api/items/read", {
@@ -139,6 +140,7 @@ function TabsElement({ userName }: { userName: string }) {
     };
 
     await getAssignees();
+    setSelectedTab("board");
   };
 
   const reloadAssignees = () => {
@@ -302,13 +304,23 @@ function TabsElement({ userName }: { userName: string }) {
                 getTickets={getTickets}
               />
             </>
-          ) : (
+          ) : selectedTab === "allTasks" ? (
             <>
               <ItemTable
                 tickets={tickets}
                 reload={reload}
                 userName={userName}
                 assignees={assignees}
+              />
+            </>
+          ) : (
+            <>
+              <ToDoPanel
+                assignees={[]}
+                reload={reload}
+                userName={userName}
+                tickets={[]}
+                getTickets={getTickets}
               />
             </>
           )}

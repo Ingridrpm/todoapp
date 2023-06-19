@@ -186,6 +186,7 @@ const ItemTable = ({
           _selectedAssignee={ticketModal.assignee}
           _dueDate={ticketModal.dueDateTime + ""}
           closeModal={closeModal}
+          reload={reload}
         />
       )}
     </>

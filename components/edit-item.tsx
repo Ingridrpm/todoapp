@@ -22,47 +22,8 @@ interface EditItemProps {
   _selectedAssignee: string;
   _dueDate: string;
   closeModal: () => void;
+  reload: () => void;
 }
-
-const saveItem = async (
-  id: string,
-  title: string,
-  description: string,
-  selectedAssignee: string,
-  dueDate: string
-) => {
-  if (title.trim() !== "") {
-    try {
-      const response = await fetch("/api/items/update", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          itemId: id,
-          newTitle: title,
-          newDescription: description,
-          newAssignee: selectedAssignee,
-          newDueDate: dueDate,
-        }),
-      });
-
-      if (response.ok) {
-        const item = await response.json();
-        return item;
-      } else {
-        console.error("Failed to create item");
-        return "";
-      }
-    } catch (error) {
-      console.error("Failed to create item", error);
-      return error;
-    }
-  } else {
-    console.log("No title");
-    return "no title";
-  }
-};
 
 const deleteItem = async (id: string) => {
   try {
@@ -95,6 +56,7 @@ const EditItem = ({
   _selectedAssignee,
   _dueDate,
   closeModal,
+  reload,
 }: EditItemProps) => {
   const [assignees, setAssignees] = useState([]);
   const [dueDate, setDueDate] = useState(_dueDate);
@@ -145,20 +107,53 @@ const EditItem = ({
   };
 
   const save = async () => {
-    const si = await saveItem(
-      id,
-      title,
-      description,
-      selectedAssignee,
-      dueDate
-    );
+    const saveItem = async () => {
+      if (title.trim() !== "") {
+        try {
+          const response = await fetch("/api/items/update", {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              itemId: id,
+              newTitle: title,
+              newDescription: description,
+              newAssignee: selectedAssignee,
+              newDueDate: dueDate,
+            }),
+          });
+
+          if (response.ok) {
+            const item = await response.json();
+            console.log("se edito ", item);
+            rel_close();
+            return true;
+          } else {
+            console.error("Failed to create item");
+            return false;
+          }
+        } catch (error) {
+          console.error("Failed to create item", error);
+          return false;
+        }
+      } else {
+        console.log("No title");
+        return false;
+      }
+    };
+
+    await saveItem();
+  };
+
+  const rel_close = () => {
+    reload();
     setTitle("");
     setDescription("");
     setDueDate("");
     setSelectedAssignee("");
     closeModal();
   };
-
   const deleteI = async () => {
     await deleteItem(id);
     closeModal();

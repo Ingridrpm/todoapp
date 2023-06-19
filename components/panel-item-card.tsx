@@ -173,6 +173,7 @@ const PanelItemCard = ({
           _selectedAssignee={ticket.assignee}
           _dueDate={ticket.dueDateTime + ""}
           closeModal={closeModal}
+          reload={reload}
         />
       )}
     </>

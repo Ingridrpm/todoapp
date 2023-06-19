@@ -76,12 +76,6 @@ const PanelColumn = ({
   const moveItem = async (ticket: Ticket) => {
     ticket.state = columnState;
     await updateItemState(ticket.id, columnState);
-    await reload();
-    //tickets = [];
-    //const tkts: Ticket[] = await getTickets();
-    //tkts.map((ticket) => {
-    //  if (ticket.state === columnState) tickets.push(ticket);
-    //});
   };
 
   return (
