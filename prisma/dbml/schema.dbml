@@ -1,0 +1,45 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table User {
+  id Int [pk, increment]
+  firstName String [not null]
+  lastName String [not null]
+  password String [not null]
+  email String [unique, not null]
+  lists List [not null]
+}
+
+Table List {
+  id Int [pk, increment]
+  title String [not null]
+  items Item [not null]
+  userId Int [not null]
+  user User [not null]
+  Assignee Assignee [not null]
+}
+
+Table Item {
+  id Int [pk, increment]
+  title String [not null]
+  description String
+  assignee Int [not null]
+  dueDateTime DateTime [not null]
+  status Int [not null]
+  listId Int [not null]
+  list List [not null]
+}
+
+Table Assignee {
+  id Int [pk, increment]
+  name String [not null]
+  listId Int [not null]
+  list List [not null]
+}
+
+Ref: List.userId > User.id
+
+Ref: Item.listId > List.id
+
+Ref: Assignee.listId > List.id

@@ -41,6 +41,7 @@
     "@types/bcrypt": "^5.0.0",
     "@types/react-beautiful-dnd": "^13.1.4",
     "prisma": "^4.15.0",
+    "prisma-dbml-generator": "^0.10.0",
     "ts-node": "^10.9.1"
   }
 }
