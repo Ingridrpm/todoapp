@@ -21,3 +21,8 @@ The project was made with Next.js for the entire site and its functionalities, p
 ![Components 2](img/2.png)
 ![Components 3](img/3.png)
 ![Components 4](img/4.png)
+
+### Database
+
+Four tables were created for the storage of site information: User, List, Item and Assignee.
+![Database](img/db.svg)
